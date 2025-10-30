@@ -36,6 +36,12 @@ async function run() {
         const db = client.db('smart_deals_db')
         const productsCollection = db.collection('products')
 
+        app.get('/products',async(req,res)=>{
+            const cursor = productsCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
         app.post('/products',async(req,res)=>{
             const newProduct = req.body
             const result = await productsCollection.insertOne(newProduct)
