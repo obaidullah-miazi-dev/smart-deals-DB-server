@@ -37,53 +37,58 @@ async function run() {
         const productsCollection = db.collection('products')
         const bidsCollection = db.collection('bids')
 
-        app.get('/products',async(req,res)=>{
-            const cursor = productsCollection.find()
+        app.get('/products', async (req, res) => {
+            const email = req.query.email
+            const query = {}
+            if (email) {
+                query.email = email
+            }
+            const cursor = productsCollection.find(query)
             const result = await cursor.toArray()
             res.send(result)
         })
 
-        app.get('/products/:id', async(req,res)=>{
+        app.get('/products/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await productsCollection.findOne(query)
             res.send(result)
         })
 
-        app.post('/products',async(req,res)=>{
+        app.post('/products', async (req, res) => {
             const newProduct = req.body
             const result = await productsCollection.insertOne(newProduct)
             res.send(result)
         })
 
-        app.delete('/products/:id', async(req,res)=>{
+        app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await productsCollection.deleteOne(query)
             res.send(result)
         })
 
-        app.patch('/products/:id', async(req,res)=>{
+        app.patch('/products/:id', async (req, res) => {
             const id = req.params.id;
             const updatedProduct = req.body
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const update = {
-                $set:{
+                $set: {
                     name: updatedProduct.name,
                     price: updatedProduct.price
                 }
             }
-            const result = await productsCollection.updateOne(query,update)
+            const result = await productsCollection.updateOne(query, update)
             res.send(result)
         })
 
         // bids related apis 
-        app.get('/bids', async(req,res)=>{
+        app.get('/bids', async (req, res) => {
 
             const email = req.query.email
             const query = {}
-            if(email){
-                query.buyer_email= email
+            if (email) {
+                query.buyer_email = email
             }
 
             const cursor = bidsCollection.find(query)
