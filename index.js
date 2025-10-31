@@ -38,6 +38,8 @@ async function run() {
         const bidsCollection = db.collection('bids')
         const usersCollection = db.collection('users')
 
+
+        //USERS APIS
         app.post('/users', async (req, res) => {
             const newUser = req.body
             const email = req.body.email;
@@ -53,6 +55,8 @@ async function run() {
 
         })
 
+
+        // PRODUCTS APIS
         app.get('/products', async (req, res) => {
             const email = req.query.email
             const query = {}
@@ -60,6 +64,12 @@ async function run() {
                 query.email = email
             }
             const cursor = productsCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get('/latestProducts',async(req,res)=>{
+            const cursor = productsCollection.find().sort({created_at: -1}).limit(6)
             const result = await cursor.toArray()
             res.send(result)
         })
