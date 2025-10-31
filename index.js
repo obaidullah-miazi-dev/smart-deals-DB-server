@@ -36,6 +36,13 @@ async function run() {
         const db = client.db('smart_deals_db')
         const productsCollection = db.collection('products')
         const bidsCollection = db.collection('bids')
+        const usersCollection= db.collection('users')
+
+        app.post('/users',async(req,res)=>{
+            const newUser = req.body
+            const result = await usersCollection.insertOne(newUser)
+            res.send(result)
+        })
 
         app.get('/products', async (req, res) => {
             const email = req.query.email
