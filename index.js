@@ -130,9 +130,26 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/bids',async(req,res)=>{
+            const query = {}
+            if(query.email){
+                query.buyerEmail= email
+            }
+            const cursor = bidsCollection.find(query)
+            const result = await cursor.toArray()
+        })
+
         app.post('/bids', async (req, res) => {
             const newBid = req.body
+            newBid.offeredPrice = Number(newBid.offeredPrice)
             const result = await bidsCollection.insertOne(newBid)
+            res.send(result)
+        })
+
+        app.delete('/bids/:id', async(req,res)=>{
+            const id = req.params.id
+            const query = {_id: new ObjectId(id)}
+            const result = await bidsCollection.deleteOne(query)
             res.send(result)
         })
 
