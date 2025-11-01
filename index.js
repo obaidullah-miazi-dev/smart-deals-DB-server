@@ -114,10 +114,18 @@ async function run() {
             const email = req.query.email
             const query = {}
             if (email) {
-                query.buyer_email = email
+                query.buyerEmail = email
             }
 
             const cursor = bidsCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get('/products/bids/:productId', async (req,res) => {
+            const productId = req.params.productId
+            const query = {productId: productId}
+            const cursor = bidsCollection.find(query).sort({offeredPrice:-1})
             const result = await cursor.toArray()
             res.send(result)
         })
