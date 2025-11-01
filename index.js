@@ -108,6 +108,17 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/products', async(req,res)=>{
+            const email = req.query.email
+            const query = {}
+            if(query.email){
+                query.sellerEmail= email
+            }
+            const cursor = productsCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
         // bids related apis 
         app.get('/bids', async (req, res) => {
 
@@ -130,14 +141,14 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/bids',async(req,res)=>{
-            const query = {}
-            if(query.email){
-                query.buyerEmail= email
-            }
-            const cursor = bidsCollection.find(query)
-            const result = await cursor.toArray()
-        })
+        // app.get('/bids',async(req,res)=>{
+        //     const query = {}
+        //     if(query.email){
+        //         query.buyerEmail= email
+        //     }
+        //     const cursor = bidsCollection.find(query)
+        //     const result = await cursor.toArray()
+        // })
 
         app.post('/bids', async (req, res) => {
             const newBid = req.body
