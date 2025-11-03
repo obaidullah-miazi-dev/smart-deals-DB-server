@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./smart-deals-shop-firebase-adminsdk.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
