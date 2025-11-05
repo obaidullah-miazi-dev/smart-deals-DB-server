@@ -8,6 +8,7 @@ const port = process.env.PORT || 3000;
 const admin = require("firebase-admin");
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+// const serviceAccount = require("./smart-deals-shop-firebase-adminsdk.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -18,17 +19,18 @@ app.use(cors());
 app.use(express.json());
 
 const logger = (req, res, next) => {
-  console.log("login info");
+  // console.log("login info");
   next();
 };
 
 const verifyFirebaseToken = async(req, res, next) => {
-  console.log("firebase verify", req.headers.authorization);
+  // console.log("firebase verify", req.headers.authorization);
   if (!req.headers.authorization) {
     return res.status(401).send({ message: "unauthorized access" });
   }
 
   const token = req.headers.authorization.split(" ")[1];
+  // console.log("token",token);
   if (!token) {
     return res.status(401).send({ message: "unauthorized access" });
   }
@@ -36,7 +38,7 @@ const verifyFirebaseToken = async(req, res, next) => {
   try {
     const userInfo = await admin.auth().verifyIdToken(token);
     req.token_email= userInfo.email
-    // console.log(userInfo);
+    // console.log('user info',userInfo);
     next();
   } catch {
     return res.status(401).send({ message: "unauthorized access" });
@@ -110,8 +112,9 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/products", async (req, res) => {
+    app.post("/products",verifyFirebaseToken, async (req, res) => {
       const newProduct = req.body;
+      console.log(req.headers);
       const result = await productsCollection.insertOne(newProduct);
       res.send(result);
     });
@@ -152,6 +155,7 @@ async function run() {
     app.get("/bids", logger, verifyFirebaseToken, async (req, res) => {
       // console.log(req.headers);
       const email = req.query.email;
+      // console.log(req);
       const query = {};
       if (email) {
         if(email !== req.token_email){
